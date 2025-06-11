@@ -123,18 +123,27 @@
     }
     .song-btn {
       background: white;
-      /*border: 2px solid #000;*/
       padding: 10px;
       cursor: pointer;
       border-radius: 5px;
       color: black;
+      white-space: nowrap; /* Запрет переноса текста */
+      width: auto; /* Автоматическая ширина */
+      display: inline-block; /* или inline-flex */
+      min-width: 50px; /* Минимальная ширина */
+      text-align: center;
+      margin: 5px 0; /* Отступы между кнопками */
     }
-    #songList {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-top: 20px;
-    }
+  #songList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+    align-items: center; /* Выравнивание по левому краю */
+    width: fit-content; /* Ширина по содержимому */
+    margin-left: auto;
+    margin-right: auto;
+  }
     .word-btn {
       background: white;
       /*border: 2px solid #000;*/
@@ -307,9 +316,9 @@
         <button class="character-btn" onclick="selectCharacter(this, '공부 안 해도 멋져요!')">🐱 고양이</button>
         <button class="character-btn" onclick="selectCharacter(this, '오늘도 최고예요!')">🐸 개구리</button>
         <button class="character-btn" onclick="selectCharacter(this, '선생님은 정말 대단해요!')">🐶 강아지</button>
-        <button class="character-btn" onclick="selectCharacter(this, '생일 축하드려요!')">🦊 여우</button>
-        <button class="character-btn" onclick="selectCharacter(this, '항상 행복하세요!')">🐻 곰</button>
-        <button class="character-btn" onclick="selectCharacter(this, '사랑해요 선생님!')">🐰 토끼</button>
+        <button class="character-btn" onclick="selectCharacter(this, '잘하고 있어요, 멈추지 마세요!')">🦊 여우</button>
+        <button class="character-btn" onclick="selectCharacter(this, '오늘도 수고했어요!')">🐻 곰</button>
+        <button class="character-btn" onclick="selectCharacter(this, '이번 주말엔 진짜로 공부할 거예요... (아마도)!')">🐰 토끼</button>
       </div>
       <p id="funnyText" style="font-size: 18px; margin-top: 20px; min-height: 50px;"></p>`,
 

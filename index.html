@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>생일 축하해요, 선생님!</title>
+  <style>
+    html, body {
+    margin: 0;
+    padding: 0;
+    /*overflow: hidden;*/
+    width: 100%;
+    min-height: 100vh;
+  }
+    html {
+    overflow: -moz-scrollbars-none;
+    -ms-overflow-style: none;
+  }
+
+    html::-webkit-scrollbar {
+      width: 0 !important;
+      display: none;
+    }
+    body {
+      background-color: #fce4ec;
+      font-family: 'Press Start 2P', cursive;
+      color: #333;
+      text-align: center;
+      padding: 10px;
+      /*overflow-x: hidden;*/
+      /*position: fixed;*/
+       -ms-overflow-style: none;
+       scrollbar-width: none;
+    }
+    .heart {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-gap: 10px;
+      justify-content: center;
+      margin-top: 50px;
+    }
+    .door {
+      width: 100px;
+      height: 100px;
+      background: #ffc0cb;
+      border: 2px solid #000;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      transition: transform 0.2s;
+    }
+    .door:hover {
+      transform: scale(1.05);
+      background: #ff9eb5;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; 
+      left: 0;
+      width: 100%; 
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      overflow: auto;
+    }
+
+    .modal-content {
+      background: #222;
+      padding: 30px;
+      width: 90%;
+      max-width: 800px;
+      max-height: 90vh;
+      border: 4px solid white;
+      overflow-y: auto;
+      position: relative;
+      color: white; /* Основной цвет текста */
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .modal-content * {
+      color: inherit; /* Наследование цвета */
+    }
+
+    /* Исключения для элементов с черным текстом */
+    .modal-content button,
+    .modal-content input {
+      color: black !important;
+    }
+
+    .modal-content::-webkit-scrollbar {
+      display: none;
+}
+    .close {
+      cursor: pointer;
+      font-size: 24px;
+      position: absolute;
+      top: 10px;
+      right: 15px;
+    }
+    .heart-confetti {
+      position: fixed;
+      width: 20px;
+      height: 20px;
+      background: transparent;
+      pointer-events: none;
+      z-index: 100;
+    }
+    .character-btn {
+      background: white;
+      /*border: 2px solid #000;*/
+      padding: 10px;
+      margin: 5px;
+      cursor: pointer;
+      transition: all 0.3s;
+      border-radius: 5px;
+      color: black;
+    }
+    .song-btn {
+      background: white;
+      /*border: 2px solid #000;*/
+      padding: 10px;
+      cursor: pointer;
+      border-radius: 5px;
+      color: black;
+    }
+    #songList {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .word-btn {
+      background: white;
+      /*border: 2px solid #000;*/
+      padding: 10px;
+      cursor: pointer;
+      border-radius: 5px;
+      color: black;
+    }
+    #password {
+    padding: 10px;
+    font-size: 16px;
+    /* border: 2px solid #000; */
+    outline: none; 
+    }
+    #password:focus {
+    border-color: #ff9eb5; 
+    /*box-shadow: 0 0 5px #ff9eb5; */
+    caret-color: #ff9eb5;
+    }
+    #password-btn {
+      background: white;
+      /*border: 2px solid #000;*/
+      padding: 10px 20px;
+      cursor: pointer;
+      border-radius: 5px;
+      color: black;
+    }
+    @media (max-width: 600px) {
+      .heart {
+        grid-template-columns: repeat(2, 100px);
+      }
+      .modal-content {
+        width: 95%;
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>🎂 선생님 생일 축하해요! 🎉</h1>
+  <div class="heart">
+    <div class="door" onclick="openModal(0)">노래</div>
+    <div class="door" onclick="openModal(1)">일정</div>
+    <div class="door" onclick="openModal(2)">감사 메시지</div>
+    <div class="door" onclick="openModal(3)">문장 게임</div>
+    <div class="door" onclick="openModal(4)">캐릭터</div>
+    <div class="door" onclick="openModal(5)">비밀 문</div>
+  </div>
+
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">✖</span>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+
+  <script>
+    const modal = document.getElementById('modal');
+    const modalBody = document.getElementById('modal-body');
+    let lastSelectedCharacter = null;
+    let currentSongBtn = null;
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const audioPlayer = document.getElementById('audioPlayer');
+      if (audioPlayer) {
+        audioPlayer.onended = function() {
+          if (currentSongBtn) {
+            currentSongBtn.style.backgroundColor = 'white';
+            currentSongBtn = null;
+          }
+        };
+      }
+    });
+
+    const messages = [
+      "멋진 선생님 되기!",
+      "학생들과 즐거운 시간!",
+      "훌륭한 수업 진행!",
+      "생일 축하 받기!",
+      "맛있는 케이크 먹기!",
+      "선물 많이 받기!"
+    ];
+
+    const contents = [
+      `<h2>🎵 생일 노래 플레이리스트 🎵</h2>
+        <p>노래를 클릭하면 재생됩니다:</p>
+        <div id="songList">
+        <button class="song-btn" onclick="playSong('everglow-colourz.mp3', this, 'https://www.youtube.com/watch?v=9CBd3DOab4k')">Everglow - Colourz</button>
+        <button class="song-btn" onclick="playSong('kim-kuk-hwan-black-rubber-shoes.mp3', this, 'https://www.youtube.com/watch?v=9SAibx1uz9A')">Kim Kuk Hwan - Black Rubber Shoes (Opening)</button>
+        <button class="song-btn" onclick="playSong('taemin-heaven.mp3', this, 'https://www.youtube.com/watch?v=gIpT5vP5hy4')">Taemin - Heaven</button>
+        <button class="song-btn" onclick="playSong('t-ara-why-are-you-being-like-this.mp3', this, 'https://www.youtube.com/watch?v=chcXtJkOqYE')">T-ara - 왜 이러니</button>
+        <button class="song-btn" onclick="playSong('giriboy-northbutsouth.mp3', this, 'https://www.youtube.com/watch?v=E0NtgbzydjI')">Giriboy - Northbutsouth</button>
+        <button class="song-btn" onclick="playSong('agustd-people.mp3', this, 'https://www.youtube.com/watch?v=sHbl6mt6X80')">Agust D - People</button>
+        </div>
+
+        <div id="playerContainer">
+        <audio id="audioPlayer" controls style="margin-top:20px; width:100%; display:none;"></audio>
+        <iframe id="youtubePlayer" width="100%" height="315" style="margin-top:20px; display:none;" frameborder="0" allowfullscreen></iframe>
+        </div>`,
+
+      `<h2>📅 선생님의 하루 일정 📅</h2>
+      <table border="1" style="margin:auto; font-size:14px;">
+      <tr><th></th><th>화</th><th>수</th><th>목</th><th>금</th><th>토</th><th>일</th></tr>
+      ${['아침','점심','저녁'].map(time => `
+      <tr><td>${time}</td>` + 
+      Array(6).fill('').map((_,i) => `
+        <td onclick="
+            if (!this.usedPhrases) {
+            this.phrases = [
+                '멋진 선생님 되기!',
+                '사랑스러운 선생님 되기!',
+                '진지한 선생님 되기!',
+                '웃긴 선생님 되기!',
+                '무서운 선생님 되기!',
+                '패셔너블한 선생님 되기!',
+                '이해심 많은 선생님 되기!',
+                '아름다운 선생님 되기!',
+                '친절한 선생님 되기!',
+                '영감을 주는 선생님 되기!'
+            ];
+            this.emojis = [
+                '🍧', '🐙', '🎉', '✨', '🌸',
+                '🍰', '🎁', '💖', '🌺', '💕'
+            ];
+            this.usedPhrases = [];
+            this.usedEmojis = [];
+            this.nextIsPhrase = true;
+            }
+            
+            if (this.nextIsPhrase) {
+            if (this.phrases.length > 0) {
+                const randomIndex = Math.floor(Math.random() * this.phrases.length);
+                this.innerText = this.phrases.splice(randomIndex, 1)[0];
+                this.usedPhrases.push(this.innerText);
+                this.nextIsPhrase = false;
+            } else {
+                this.innerText = '🎂 최고예요!';
+            }
+            } else {
+            if (this.emojis.length > 0) {
+                const randomIndex = Math.floor(Math.random() * this.emojis.length);
+                this.innerText = this.emojis.splice(randomIndex, 1)[0];
+                this.usedEmojis.push(this.innerText);
+                this.nextIsPhrase = true;
+            } else {
+                this.innerText = '💝 사랑해요!';
+            }
+            }
+      "> </td>`).join('') + `
+      </tr>`).join('')}
+      </table>`,
+
+      `<h2>💌 감사 메시지 💌</h2>
+       <div style="font-size:16px; line-height:1.8;">
+         <p>선생님, 항상 친절하게 설명해 주셔서 감사합니다!</p>
+         <p>수업이 정말 재미있어요!</p>
+         <p>항상 웃으시는 모습이 너무 좋아요~</p>
+         <p>어려운 내용도 쉽게 가르쳐 주셔서 감사합니다!</p>
+         <p>선생님 덕분에 공부가 즐거워졌어요!</p>
+       </div>`,
+
+      `<h2>🎮 문장 만들기 🎮</h2>
+        <p>단어를 클릭하면 추가됩니다.</p>
+        <div id="words" style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 20px 0;"></div>
+        <p id="result" style="font-size: 18px; min-height: 50px;"></p>
+        <p id="success-message" style="color: #ff9eb5; font-weight: bold; display: none;">🎉 정답입니다! 축하합니다! 🎉</p>`,
+
+      `<h2>🤖 캐릭터와 대화 🤖</h2>
+      <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;">
+        <button class="character-btn" onclick="selectCharacter(this, '공부 안 해도 멋져요!')">🐱 고양이</button>
+        <button class="character-btn" onclick="selectCharacter(this, '오늘도 최고예요!')">🐸 개구리</button>
+        <button class="character-btn" onclick="selectCharacter(this, '선생님은 정말 대단해요!')">🐶 강아지</button>
+        <button class="character-btn" onclick="selectCharacter(this, '생일 축하드려요!')">🦊 여우</button>
+        <button class="character-btn" onclick="selectCharacter(this, '항상 행복하세요!')">🐻 곰</button>
+        <button class="character-btn" onclick="selectCharacter(this, '사랑해요 선생님!')">🐰 토끼</button>
+      </div>
+      <p id="funnyText" style="font-size: 18px; margin-top: 20px; min-height: 50px;"></p>`,
+
+      `<h2>🔒 비밀 문 🔒</h2>
+       <p>비밀번호를 입력하세요 (힌트: 선생님의 생일 월일):</p>
+       <input id="password" type="text" style="padding: 10px; font-size: 16px;">
+       <button id="password-btn" onclick="checkPassword()">확인</button>
+       <p id="secretMessage" style="font-size: 18px; margin-top: 20px;"></p>`
+    ];
+
+    function openModal(index) {
+      modal.style.display = 'flex';
+      modalBody.innerHTML = contents[index];
+      if(index === 3) initSentenceGame();
+    }
+
+    function closeModal() {
+      modal.style.display = 'none';
+      const player = document.getElementById('player');
+      if(player) {
+        player.pause();
+        player.currentTime = 0;
+      }
+    }
+
+    function playSong(songFile, button, youtubeUrl) {
+      const audioPlayer = document.getElementById('audioPlayer');
+      const youtubePlayer = document.getElementById('youtubePlayer');
+      
+      // Сбрасываем предыдущий выбор
+      if (currentSongBtn) {
+          currentSongBtn.style.backgroundColor = 'white';
+      }
+      
+      // Подсвечиваем текущую песню
+      button.style.backgroundColor = '#ff9eb5';
+      currentSongBtn = button;
+      
+      // Пробуем воспроизвести аудиофайл
+      audioPlayer.src = songFile;
+      audioPlayer.style.display = 'block';
+      youtubePlayer.style.display = 'none';
+      
+      audioPlayer.play().catch(error => {
+          console.log('Audio file not found, falling back to YouTube');
+          
+          // Если аудиофайл не найден, используем YouTube
+          audioPlayer.style.display = 'none';
+          youtubePlayer.style.display = 'block';
+          
+          // Извлекаем ID видео из URL (замените EXAMPLE на реальные ID)
+          const videoId = youtubeUrl.split('v=')[1];
+          youtubePlayer.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+      });
+    }
+
+    // Обработчик окончания песни
+    document.getElementById('audioPlayer').onended = function() {
+      if (currentSongBtn) {
+          currentSongBtn.style.backgroundColor = 'white';
+          currentSongBtn = null;
+      }
+    };
+
+    function selectCharacter(button, text) {
+      console.log('selectCharacter called with:', text); // Добавьте эту строку
+      
+      if (lastSelectedCharacter) {
+        lastSelectedCharacter.style.backgroundColor = 'white';
+      }
+      
+      button.style.backgroundColor = '#ff9eb5';
+      lastSelectedCharacter = button;
+      
+      const modalContent = button.closest('.modal-content');
+      console.log('modalContent:', modalContent); // Добавьте эту строку
+      
+      if (modalContent) {
+        const funnyText = modalContent.querySelector('#funnyText');
+        console.log('funnyText:', funnyText); // Добавьте эту строку
+        if (funnyText) {
+          funnyText.innerText = text;
+        }
+      }
+   }  
+
+    function checkPassword() {
+      const pw = document.getElementById('password').value;
+      const msg = document.getElementById('secretMessage');
+      if(pw === '0608') {
+        msg.innerText = '🎉 비밀 메시지: 리자쌤 너무 사랑해요! 🎉';
+        createHearts(30);
+      } else {
+        msg.innerText = '❌ 비밀번호가 틀렸어요';
+      }
+    }
+
+    function initSentenceGame() {
+        const sentence = [
+            '사랑하는',
+            '선생님께',
+            '이',
+            '특별한',
+            '날에',
+            '진심으로',
+            '감사드리며',
+            '생일을',
+            '축하합니다'
+        ];
+        
+        const shuffled = [...sentence].sort(() => Math.random() - 0.5);
+        const wordsDiv = document.getElementById('words');
+        const result = document.getElementById('result');
+        const successMsg = document.getElementById('success-message');
+        let selectedWords = [];
+        let correctCount = 0;
+
+        // Очищаем предыдущее состояние
+        wordsDiv.innerHTML = '';
+        result.innerText = '';
+        successMsg.style.display = 'none';
+
+        // Создаем кнопки для слов
+        shuffled.forEach(word => {
+            const btn = document.createElement('button');
+            btn.innerText = word;
+            btn.className = 'word-btn';
+            btn.style.backgroundColor = '#fff';
+            btn.onclick = function() {
+            const index = selectedWords.indexOf(word);
+            
+            if (index === -1) {
+                // Добавляем слово
+                selectedWords.push(word);
+                btn.style.backgroundColor = '#ff9eb5';
+            } else {
+                // Удаляем слово
+                selectedWords.splice(index, 1);
+                btn.style.backgroundColor = '#fff';
+            }
+            
+            // Обновляем результат
+            result.innerText = selectedWords.join(' ');
+            
+            // Проверяем правильность
+            checkCorrectness();
+            };
+            wordsDiv.appendChild(btn);
+        });
+
+        function checkCorrectness() {
+            if (selectedWords.length === sentence.length) {
+            const isCorrect = selectedWords.every((word, i) => word === sentence[i]);
+            
+            if (isCorrect) {
+                correctCount++;
+                
+                if (correctCount === 1) {
+                // Первое правильное выполнение - показываем сообщение и запускаем анимацию
+                successMsg.style.display = 'block';
+                //createHearts(30);
+                
+                // Через 3 секунды прячем сообщение
+                //setTimeout(() => {
+                //    successMsg.style.display = 'none';
+                //}, 3000);
+                }
+                
+                // После каждого правильного выполнения
+                //result.innerHTML += ' <span style="color:#d23669">✓</span>';
+            }
+            }
+        }
+        }
+    // 하트 콘페티 함수
+    function createHearts(count) {
+      for (let i = 0; i < count; i++) {
+        setTimeout(() => {
+          const heart = document.createElement('div');
+          heart.classList.add('heart-confetti');
+          heart.innerHTML = '❤';
+          heart.style.left = Math.random() * 100 + 'vw';
+          heart.style.top = -20 + 'px';
+          heart.style.fontSize = (Math.random() * 20 + 10) + 'px';
+          heart.style.animation = `fall ${Math.random() * 3 + 2}s linear forwards`;
+          
+          document.body.appendChild(heart);
+          
+          setTimeout(() => {
+            heart.remove();
+          }, 5000);
+        }, i * 100);
+      }
+    }
+
+    // CSS 애니메이션 추가
+    const style = document.createElement('style');
+    style.innerHTML = `
+      @keyframes fall {
+        to {
+          transform: translateY(100vh) rotate(360deg);
+          opacity: 0;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+
+    // 페이지 로드 시 하트 콘페티
+    window.onload = function() {
+      createHearts(50);
+      
+      // 5초마다 약간의 하트 추가
+      setInterval(() => {
+        createHearts(5);
+      }, 5000);
+    };
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</body>
+</html>

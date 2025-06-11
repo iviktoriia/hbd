@@ -109,6 +109,7 @@
       right: 15px;
     }
     
+    /* Полное определение стилей для сердечек */
     .heart-confetti {
       position: fixed;
       width: 20px;
@@ -205,6 +206,7 @@
   </style>
 </head>
 <body>
+  <!-- Остальное содержимое body остается таким же -->
 <h1>🎂 선생님 생일 축하해요! 🎉</h1>
   <div class="heart">
     <div class="door" onclick="openModal(0)">노래</div>
@@ -370,13 +372,16 @@
       const audioPlayer = document.getElementById('audioPlayer');
       const youtubePlayer = document.getElementById('youtubePlayer');
       
+      // Сбрасываем предыдущий выбор
       if (currentSongBtn) {
           currentSongBtn.style.backgroundColor = 'white';
       }
       
+      // Подсвечиваем текущую песню
       button.style.backgroundColor = '#ff9eb5';
       currentSongBtn = button;
       
+      // Пробуем воспроизвести аудиофайл
       audioPlayer.src = songFile;
       audioPlayer.style.display = 'block';
       youtubePlayer.style.display = 'none';
@@ -384,14 +389,17 @@
       audioPlayer.play().catch(error => {
           console.log('Audio file not found, falling back to YouTube');
           
+          // Если аудиофайл не найден, используем YouTube
           audioPlayer.style.display = 'none';
           youtubePlayer.style.display = 'block';
           
+          // Извлекаем ID видео из URL (замените EXAMPLE на реальные ID)
           const videoId = youtubeUrl.split('v=')[1];
           youtubePlayer.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
       });
     }
 
+    // Обработчик окончания песни
     document.getElementById('audioPlayer').onended = function() {
       if (currentSongBtn) {
           currentSongBtn.style.backgroundColor = 'white';
@@ -400,7 +408,7 @@
     };
 
     function selectCharacter(button, text) {
-      console.log('selectCharacter called with:', text); 
+      console.log('selectCharacter called with:', text); // Добавьте эту строку
       
       if (lastSelectedCharacter) {
         lastSelectedCharacter.style.backgroundColor = 'white';
@@ -410,11 +418,11 @@
       lastSelectedCharacter = button;
       
       const modalContent = button.closest('.modal-content');
-      console.log('modalContent:', modalContent); 
+      console.log('modalContent:', modalContent); // Добавьте эту строку
       
       if (modalContent) {
         const funnyText = modalContent.querySelector('#funnyText');
-        console.log('funnyText:', funnyText); 
+        console.log('funnyText:', funnyText); // Добавьте эту строку
         if (funnyText) {
           funnyText.innerText = text;
         }
@@ -452,10 +460,12 @@
         let selectedWords = [];
         let correctCount = 0;
 
+        // Очищаем предыдущее состояние
         wordsDiv.innerHTML = '';
         result.innerText = '';
         successMsg.style.display = 'none';
 
+        // Создаем кнопки для слов
         shuffled.forEach(word => {
             const btn = document.createElement('button');
             btn.innerText = word;
@@ -465,15 +475,19 @@
             const index = selectedWords.indexOf(word);
             
             if (index === -1) {
+                // Добавляем слово
                 selectedWords.push(word);
                 btn.style.backgroundColor = '#ff9eb5';
             } else {
+                // Удаляем слово
                 selectedWords.splice(index, 1);
                 btn.style.backgroundColor = '#fff';
             }
             
+            // Обновляем результат
             result.innerText = selectedWords.join(' ');
             
+            // Проверяем правильность
             checkCorrectness();
             };
             wordsDiv.appendChild(btn);
@@ -487,6 +501,7 @@
                 correctCount++;
                 
                 if (correctCount === 1) {
+                // Первое правильное выполнение - показываем сообщение и запускаем анимацию
                 successMsg.style.display = 'block';
                 //createHearts(30);
                 
@@ -502,6 +517,7 @@
             }
         }
         }
+    // Все ваши функции остаются такими же, кроме createHearts
     function createHearts(count) {
       const colors = ['#ff0000', '#ff69b4', '#ff1493', '#ff00ff', '#ff6347'];
       
@@ -515,14 +531,17 @@
           heart.style.fontSize = (Math.random() * 15 + 10) + 'px';
           heart.style.color = colors[Math.floor(Math.random() * colors.length)];
           
+          // Уникальная анимация для каждого сердца
           const duration = Math.random() * 3 + 2;
           heart.style.animation = `fall ${duration}s linear forwards`;
           
+          // Случайное смещение по X
           const xOffset = (Math.random() - 0.5) * 100;
           heart.style.setProperty('--x-offset', `${xOffset}px`);
           
           document.body.appendChild(heart);
           
+          // Удаление через 5 секунд
           setTimeout(() => {
             if (heart.parentNode) {
               heart.parentNode.removeChild(heart);
@@ -532,6 +551,7 @@
       }
     }
 
+    // Обновите keyframes для поддержки смещения по X
     const style = document.createElement('style');
     style.innerHTML = `
       @keyframes fall {
@@ -547,10 +567,22 @@
     `;
     document.head.appendChild(style);
 
+    // Инициализация при загрузке
     window.addEventListener('load', () => {
       createHearts(50);
       setInterval(() => createHearts(5), 5000);
     });
+
+    // Остальной ваш JavaScript код остается без изменений
+    // ... (все остальные функции)
+     /*window.onload = function() {
+      createHearts(50);
+      
+      // 5초마다 약간의 하트 추가
+      setInterval(() => {
+        createHearts(5);
+      }, 5000);
+    };*/
   </script>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </body>

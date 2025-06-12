@@ -1,0 +1,197 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+}
+
+html {
+  overflow: -moz-scrollbars-none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar {
+  width: 0 !important;
+  display: none;
+}
+
+body {
+  background-color: #fce4ec;
+  font-family: 'Press Start 2P', cursive;
+  color: #333;
+  text-align: center;
+  padding: 10px;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.heart {
+  display: grid;
+  grid-template-columns: repeat(3, 100px);
+  grid-gap: 10px;
+  justify-content: center;
+  margin-top: 50px;
+}
+
+.door {
+  width: 100px;
+  height: 100px;
+  background: #ffc0cb;
+  border: 2px solid #000;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  transition: transform 0.2s;
+}
+
+.door:hover {
+  transform: scale(1.05);
+  background: #ff9eb5;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 0; 
+  left: 0;
+  width: 100%; 
+  height: 100%;
+  background: rgba(0,0,0,0.8);
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  overflow: auto;
+}
+
+.modal-content {
+  background: #222;
+  padding: 30px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  border: 4px solid white;
+  overflow-y: auto;
+  position: relative;
+  color: white;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.modal-content * {
+  color: inherit;
+}
+
+.modal-content button,
+.modal-content input {
+  color: black !important;
+}
+
+.modal-content::-webkit-scrollbar {
+  display: none;
+}
+
+.close {
+  cursor: pointer;
+  font-size: 24px;
+  position: absolute;
+  top: 10px;
+  right: 15px;
+}
+
+.heart-confetti {
+  position: fixed;
+  width: 20px;
+  height: 20px;
+  background: transparent;
+  pointer-events: none;
+  z-index: 200;
+  animation: fall linear forwards;
+  will-change: transform, opacity;
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(-20px) translateX(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(calc(100vh + 20px)) translateX(0) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+.character-btn {
+  background: white;
+  padding: 10px;
+  margin: 5px;
+  cursor: pointer;
+  transition: all 0.3s;
+  border-radius: 5px;
+  color: black;
+}
+
+.song-btn {
+  background: white;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  color: black;
+  white-space: nowrap;
+  width: auto;
+  display: inline-block;
+  min-width: 50px;
+  text-align: center;
+  margin: 5px 0;
+}
+
+#songList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+  align-items: center;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.word-btn {
+  background: white;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  color: black;
+}
+
+#password {
+  padding: 10px;
+  font-size: 16px;
+  outline: none;
+}
+
+#password:focus {
+  border-color: #ff9eb5;
+  caret-color: #ff9eb5;
+}
+
+#password-btn {
+  background: white;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  color: black;
+}
+
+@media (max-width: 600px) {
+  .heart {
+    grid-template-columns: repeat(2, 100px);
+  }
+  .modal-content {
+    width: 95%;
+    padding: 20px;
+  }
+}
